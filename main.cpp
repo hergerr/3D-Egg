@@ -1,7 +1,85 @@
 #include <GL/glut.h>
 #include <iostream>
+#include <vector>
+#include <cmath>
+
+using namespace std;
 
 typedef float point3[3];
+
+struct Point
+{
+    float x, y, z;
+};
+
+const int N = 50;
+vector<vector<Point>> points;
+
+float step = 1.0 / N;
+
+void resizeVectors()
+{
+    points.resize(N);
+    for (int i = 0; i < N; i++)
+    {
+        points[i].resize(N);
+    }
+}
+
+float calcX(float u, float v)
+{
+    return (-90 * pow(u, 5) + 225 * pow(u, 4) - 270 * pow(u, 3) + 180 * pow(u, 2) - 45 * u) * cos(M_PI * v);
+}
+
+float calcY(float u, float v)
+{
+    return 160 * pow(u, 4) - 320 * pow(u, 3) + 160 * pow(u, 2); 
+}
+
+float calcZ(float u, float v)
+{
+    return (-90 * pow(u, 5) + 225 * pow(u, 4) - 270 * pow(u, 3) + 180 * pow(u, 2) - 45 * u) * sin(M_PI * v);
+}
+
+void calculatePoints()
+{
+
+    float u, v;
+
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            u = i * step;
+            v = j * step;
+
+            points[i][j].x = calcX(u, v);
+            points[i][j].y = calcY(u, v);
+            points[i][j].z = calcZ(u, v);
+        }
+    }
+}
+
+void printPoints()
+{
+
+    glColor3f(1, 1, 0);
+
+    glBegin(GL_POINTS);
+
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
+            glVertex3f(points[i][j].x,points[i][j].y, points[i][j].z);
+
+    glEnd();
+}
+
+void Egg()
+{
+    resizeVectors();
+    calculatePoints();
+    printPoints();
+}
 
 void Axes(void)
 {
@@ -46,16 +124,10 @@ void Axes(void)
 
 void RenderScene(void)
 {
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // Czyszczenie okna aktualnym kolorem czyszczącym
-
     glLoadIdentity();
-    // Czyszczenie macierzy bieżącej
-    Axes();
-    glColor3f(1.0f, 1.0f, 1.0f);    // Ustawienie koloru rysowania na biały
-    glRotated(60.0, 1.0, 1.0, 1.0); // Obrót o 60 stopni
-    glutWireTeapot(3.0);            // Narysowanie obrazu czajnika do herbaty
+    
+    Egg();
     glFlush();
     glutSwapBuffers();
 }
