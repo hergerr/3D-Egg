@@ -15,7 +15,6 @@ struct Point
 const int N = 50;
 vector<vector<Point>> points;
 
-float step = 1.0 / N;
 
 void resizeVectors()
 {
@@ -33,7 +32,7 @@ float calcX(float u, float v)
 
 float calcY(float u, float v)
 {
-    return 160 * pow(u, 4) - 320 * pow(u, 3) + 160 * pow(u, 2); 
+    return 160 * pow(u, 4) - 320 * pow(u, 3) + 160 * pow(u, 2) - 5; 
 }
 
 float calcZ(float u, float v)
@@ -50,8 +49,8 @@ void calculatePoints()
     {
         for (int j = 0; j < N; j++)
         {
-            u = i * step;
-            v = j * step;
+            u = float(i) / (N-1);
+            v = float(j) / (N-1);
 
             points[i][j].x = calcX(u, v);
             points[i][j].y = calcY(u, v);
@@ -74,11 +73,37 @@ void printPoints()
     glEnd();
 }
 
+void printLines(){
+    for (int i = 0; i < N - 1; i++){
+        for (int j = 0; j < N - 1; j++){
+            glBegin(GL_LINES);
+                glVertex3f(points[i][j].x,points[i][j].y, points[i][j].z);
+                glVertex3f(points[i][j + 1].x,points[i][j + 1].y, points[i][j + 1].z);
+            glEnd();
+
+            glBegin(GL_LINES);
+                glVertex3f(points[i][j].x,points[i][j].y, points[i][j].z);
+                glVertex3f(points[i + 1][j + 1].x,points[i + 1][j + 1].y, points[i + 1][j + 1].z);
+            glEnd();
+        
+            glBegin(GL_LINES);
+                glVertex3f(points[i][j].x,points[i][j].y, points[i][j].z);
+                glVertex3f(points[i + 1][j].x,points[i + 1][j].y, points[i + 1][j].z);
+            glEnd();
+        }        
+    }
+}
+
+void printTriangles(){
+
+}
+
 void Egg()
 {
     resizeVectors();
     calculatePoints();
-    printPoints();
+    // printPoints();
+    printLines();
 }
 
 void Axes(void)
