@@ -6,21 +6,39 @@
 using namespace std;
 
 int model = 1;
-
-struct Point
-{
-    float x, y, z;
-};
-
-const int N = 50;
-vector<vector<Point>> points;
-
+static GLfloat theta[] = {0.0, 0.0, 0.0}; // trzy kąty obrotu
 
 int getRand(int a, int b)
 {
     return a + rand() % (b - a);
 }
 
+struct Point
+{
+    float x, y, z;
+    int a, b, c;
+};
+
+const int N = 50;
+vector<vector<Point>> points;
+
+void spinEgg()
+{
+
+    theta[0] -= 0.5;
+    if (theta[0] > 360.0)
+        theta[0] -= 360.0;
+
+    theta[1] -= 0.5;
+    if (theta[1] > 360.0)
+        theta[1] -= 360.0;
+
+    theta[2] -= 0.5;
+    if (theta[2] > 360.0)
+        theta[2] -= 360.0;
+
+    glutPostRedisplay(); //odświeżenie zawartości aktualnego okna
+}
 
 void resizeVectors()
 {
@@ -61,6 +79,10 @@ void calculatePoints()
             points[i][j].x = calcX(u, v);
             points[i][j].y = calcY(u, v);
             points[i][j].z = calcZ(u, v);
+
+            points[i][j].a = getRand(0,255);
+            points[i][j].b = getRand(0,255);
+            points[i][j].c = getRand(0,255);
         }
     }
 }
@@ -109,11 +131,31 @@ void printTriangles()
     {
         for (int j = 0; j < N - 1; j++)
         {
-            glBegin(GL_TRIANGLES); 
-            glColor3ub(getRand(0, 255) , getRand(0, 255), getRand(0, 255));
+            glBegin(GL_TRIANGLES);
+
+            glColor3ub(points[i][j].a, points[i][j].b, points[i][j].c);
             glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
+
+            glColor3ub(points[i][j + 1].a, points[i][j + 1].b, points[i][j + 1].c);
             glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
+
+            glColor3ub(points[i + 1][j].a, points[i + 1][j].b, points[i + 1][j].c);
             glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
+
+            glEnd();
+
+            glBegin(GL_TRIANGLES);
+            
+            glColor3ub(points[i + 1][j].a, points[i + 1][j].b, points[i + 1][j].c);
+            glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
+
+
+            glColor3ub(points[i + 1][j + 1].a, points[i + 1][j + 1].b, points[i + 1][j + 1].c);
+            glVertex3f(points[i + 1][j + 1].x, points[i + 1][j + 1].y, points[i + 1][j + 1].z);
+            
+            glColor3ub(points[i][j + 1].a, points[i][j + 1].b, points[i][j + 1].c);
+            glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
+            
             glEnd();
         }
     }
@@ -121,19 +163,23 @@ void printTriangles()
 
 void Egg()
 {
-    resizeVectors();
-    calculatePoints();
-
-    if(model == 1) printPoints();
-    else if(model == 2) printLines();
-    else printTriangles();
-
+    if (model == 1)
+        printPoints();
+    else if (model == 2)
+        printLines();
+    else
+        printTriangles();
 }
 
 void RenderScene(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
+
+    glRotatef(theta[0], 1.0, 0.0, 0.0);
+    glRotatef(theta[1], 0.0, 1.0, 0.0);
+    glRotatef(theta[2], 0.0, 0.0, 1.0);
+
     // Axes();
     Egg();
     glFlush();
@@ -148,6 +194,8 @@ void MyInit(void)
 {
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    resizeVectors();
+    calculatePoints();
     // Kolor czyszcący (wypełnienia okna) ustawiono na czarny
 }
 
@@ -180,10 +228,13 @@ void ChangeSize(GLsizei horizontal, GLsizei vertical)
 void keys(unsigned char key, int x, int y)
 {
 
-    if(key == 'p') model = 1;
-    if(key == 'w') model = 2;
-    if(key == 's') model = 3;
-   
+    if (key == 'p')
+        model = 1;
+    if (key == 'w')
+        model = 2;
+    if (key == 's')
+        model = 3;
+
     RenderScene(); // przerysowanie obrazu sceny
 }
 
@@ -201,6 +252,8 @@ int main(int argc, char *argv[])
     glutReshapeFunc(ChangeSize);
     MyInit();
     glutKeyboardFunc(keys);
+    glutIdleFunc(spinEgg);
+
     glEnable(GL_DEPTH_TEST);
     // Włączenie mechanizmu usuwania powierzchni niewidocznych
 
