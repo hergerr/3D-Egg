@@ -16,6 +16,12 @@ const int N = 50;
 vector<vector<Point>> points;
 
 
+int getRand(int a, int b)
+{
+    return a + rand() % (b - a);
+}
+
+
 void resizeVectors()
 {
     points.resize(N);
@@ -32,7 +38,7 @@ float calcX(float u, float v)
 
 float calcY(float u, float v)
 {
-    return 160 * pow(u, 4) - 320 * pow(u, 3) + 160 * pow(u, 2) - 5; 
+    return 160 * pow(u, 4) - 320 * pow(u, 3) + 160 * pow(u, 2) - 5;
 }
 
 float calcZ(float u, float v)
@@ -49,8 +55,8 @@ void calculatePoints()
     {
         for (int j = 0; j < N; j++)
         {
-            u = float(i) / (N-1);
-            v = float(j) / (N-1);
+            u = float(i) / (N - 1);
+            v = float(j) / (N - 1);
 
             points[i][j].x = calcX(u, v);
             points[i][j].y = calcY(u, v);
@@ -68,34 +74,49 @@ void printPoints()
 
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
-            glVertex3f(points[i][j].x,points[i][j].y, points[i][j].z);
+            glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
 
     glEnd();
 }
 
-void printLines(){
-    for (int i = 0; i < N - 1; i++){
-        for (int j = 0; j < N - 1; j++){
+void printLines()
+{
+    for (int i = 0; i < N - 1; i++)
+    {
+        for (int j = 0; j < N - 1; j++)
+        {
             glBegin(GL_LINES);
-                glVertex3f(points[i][j].x,points[i][j].y, points[i][j].z);
-                glVertex3f(points[i][j + 1].x,points[i][j + 1].y, points[i][j + 1].z);
+            glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
+            glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
             glEnd();
 
             glBegin(GL_LINES);
-                glVertex3f(points[i][j].x,points[i][j].y, points[i][j].z);
-                glVertex3f(points[i + 1][j + 1].x,points[i + 1][j + 1].y, points[i + 1][j + 1].z);
+            glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
+            glVertex3f(points[i + 1][j + 1].x, points[i + 1][j + 1].y, points[i + 1][j + 1].z);
             glEnd();
-        
+
             glBegin(GL_LINES);
-                glVertex3f(points[i][j].x,points[i][j].y, points[i][j].z);
-                glVertex3f(points[i + 1][j].x,points[i + 1][j].y, points[i + 1][j].z);
+            glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
+            glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
             glEnd();
-        }        
+        }
     }
 }
 
-void printTriangles(){
-
+void printTriangles()
+{
+    for (int i = 0; i < N - 1; i++)
+    {
+        for (int j = 0; j < N - 1; j++)
+        {
+            glBegin(GL_TRIANGLES); 
+            glColor3ub(getRand(0, 255) , getRand(0, 255), getRand(0, 255));
+            glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
+            glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
+            glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
+            glEnd();
+        }
+    }
 }
 
 void Egg()
@@ -103,7 +124,9 @@ void Egg()
     resizeVectors();
     calculatePoints();
     // printPoints();
-    printLines();
+    // printLines();
+    printTriangles();
+
 }
 
 void Axes(void)
@@ -151,7 +174,7 @@ void RenderScene(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    
+    // Axes();
     Egg();
     glFlush();
     glutSwapBuffers();
