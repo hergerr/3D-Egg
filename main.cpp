@@ -5,7 +5,7 @@
 
 using namespace std;
 
-typedef float point3[3];
+int model = 1;
 
 struct Point
 {
@@ -123,52 +123,12 @@ void Egg()
 {
     resizeVectors();
     calculatePoints();
-    // printPoints();
-    // printLines();
-    printTriangles();
+
+    if(model == 1) printPoints();
+    else if(model == 2) printLines();
+    else printTriangles();
 
 }
-
-void Axes(void)
-{
-
-    point3 x_min = {-5.0, 0.0, 0.0};
-    point3 x_max = {5.0, 0.0, 0.0};
-    // początek i koniec obrazu osi x
-
-    point3 y_min = {0.0, -5.0, 0.0};
-    point3 y_max = {0.0, 5.0, 0.0};
-    // początek i koniec obrazu osi y
-
-    point3 z_min = {0.0, 0.0, -5.0};
-    point3 z_max = {0.0, 0.0, 5.0};
-    //  początek i koniec obrazu osi y
-
-    glColor3f(1.0f, 0.0f, 0.0f); // kolor rysowania osi - czerwony
-    glBegin(GL_LINES);           // rysowanie osi x
-    glVertex3fv(x_min);
-    glVertex3fv(x_max);
-    glEnd();
-
-    glColor3f(0.0f, 1.0f, 0.0f); // kolor rysowania - zielony
-    glBegin(GL_LINES);           // rysowanie osi y
-
-    glVertex3fv(y_min);
-    glVertex3fv(y_max);
-    glEnd();
-
-    glColor3f(0.0f, 0.0f, 1.0f); // kolor rysowania - niebieski
-    glBegin(GL_LINES);           // rysowanie osi z
-
-    glVertex3fv(z_min);
-    glVertex3fv(z_max);
-    glEnd();
-}
-
-/*************************************************************************************/
-
-// Funkcja określająca co ma być rysowane (zawsze wywoływana gdy trzeba
-// przerysować scenę)
 
 void RenderScene(void)
 {
@@ -200,26 +160,13 @@ void MyInit(void)
 
 void ChangeSize(GLsizei horizontal, GLsizei vertical)
 {
-
     GLfloat AspectRatio;
-    // Deklaracja zmiennej AspectRatio  określającej proporcję
-    // wymiarów okna
     if (vertical == 0) // Zabezpieczenie przed dzieleniem przez 0
         vertical = 1;
     glViewport(0, 0, horizontal, vertical);
-    // Ustawienie wielkościokna okna widoku (viewport)
-    // W tym przypadku od (0,0) do (horizontal, vertical)
     glMatrixMode(GL_PROJECTION);
-    // Przełączenie macierzy bieżącej na macierz projekcji
     glLoadIdentity();
-    // Czyszcznie macierzy bieżącej
     AspectRatio = (GLfloat)horizontal / (GLfloat)vertical;
-    // Wyznaczenie współczynnika  proporcji okna
-    // Gdy okno nie jest kwadratem wymagane jest określenie tak zwanej
-    // przestrzeni ograniczającej pozwalającej zachować właściwe
-    // proporcje rysowanego obiektu.
-    // Do okreslenia przestrzeni ograniczjącej służy funkcja
-    // glOrtho(...)
     if (horizontal <= vertical)
 
         glOrtho(-7.5, 7.5, -7.5 / AspectRatio, 7.5 / AspectRatio, 10.0, -10.0);
@@ -227,15 +174,18 @@ void ChangeSize(GLsizei horizontal, GLsizei vertical)
 
         glOrtho(-7.5 * AspectRatio, 7.5 * AspectRatio, -7.5, 7.5, 10.0, -10.0);
     glMatrixMode(GL_MODELVIEW);
-    // Przełączenie macierzy bieżącej na macierz widoku modelu
-
     glLoadIdentity();
-    // Czyszcenie macierzy bieżącej
 }
 
-/*************************************************************************************/
+void keys(unsigned char key, int x, int y)
+{
 
-// Główny punkt wejścia programu. Program działa w trybie konsoli
+    if(key == 'p') model = 1;
+    if(key == 'w') model = 2;
+    if(key == 's') model = 3;
+   
+    RenderScene(); // przerysowanie obrazu sceny
+}
 
 int main(int argc, char *argv[])
 {
@@ -245,12 +195,12 @@ int main(int argc, char *argv[])
     glutInitWindowSize(300, 300);
 
     glutInit(&argc, argv);
-
     glutCreateWindow("Uklad wspolrzednych 3D");
 
     glutDisplayFunc(RenderScene);
     glutReshapeFunc(ChangeSize);
     MyInit();
+    glutKeyboardFunc(keys);
     glEnable(GL_DEPTH_TEST);
     // Włączenie mechanizmu usuwania powierzchni niewidocznych
 
