@@ -19,7 +19,7 @@ struct Point
     int a, b, c;
 };
 
-const int N = 50;
+const int N = 21;
 vector<vector<Point>> points;
 
 void spinEgg()
@@ -80,9 +80,9 @@ void calculatePoints()
             points[i][j].y = calcY(u, v);
             points[i][j].z = calcZ(u, v);
 
-            points[i][j].a = getRand(0,255);
-            points[i][j].b = getRand(0,255);
-            points[i][j].c = getRand(0,255);
+            points[i][j].a = getRand(0, 255);
+            points[i][j].b = getRand(0, 255);
+            points[i][j].c = getRand(0, 255);
         }
     }
 }
@@ -131,32 +131,62 @@ void printTriangles()
     {
         for (int j = 0; j < N - 1; j++)
         {
-            glBegin(GL_TRIANGLES);
+            if (points[i][j].z > 0)
+            {
+                glBegin(GL_TRIANGLES);
 
-            glColor3ub(points[i][j].a, points[i][j].b, points[i][j].c);
-            glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
+                glColor3ub(points[i][j].a, points[i][j].b, points[i][j].c);
+                glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
 
-            glColor3ub(points[i][j + 1].a, points[i][j + 1].b, points[i][j + 1].c);
-            glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
+                glColor3ub(points[i][j + 1].a, points[i][j + 1].b, points[i][j + 1].c);
+                glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
 
-            glColor3ub(points[i + 1][j].a, points[i + 1][j].b, points[i + 1][j].c);
-            glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
+                glColor3ub(points[i + 1][j].a, points[i + 1][j].b, points[i + 1][j].c);
+                glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
 
-            glEnd();
+                glEnd();
 
-            glBegin(GL_TRIANGLES);
-            
-            glColor3ub(points[i + 1][j].a, points[i + 1][j].b, points[i + 1][j].c);
-            glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
+                glBegin(GL_TRIANGLES);
 
+                glColor3ub(points[i + 1][j].a, points[i + 1][j].b, points[i + 1][j].c);
+                glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
 
-            glColor3ub(points[i + 1][j + 1].a, points[i + 1][j + 1].b, points[i + 1][j + 1].c);
-            glVertex3f(points[i + 1][j + 1].x, points[i + 1][j + 1].y, points[i + 1][j + 1].z);
-            
-            glColor3ub(points[i][j + 1].a, points[i][j + 1].b, points[i][j + 1].c);
-            glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
-            
-            glEnd();
+                glColor3ub(points[i + 1][j + 1].a, points[i + 1][j + 1].b, points[i + 1][j + 1].c);
+                glVertex3f(points[i + 1][j + 1].x, points[i + 1][j + 1].y, points[i + 1][j + 1].z);
+
+                glColor3ub(points[i][j + 1].a, points[i][j + 1].b, points[i][j + 1].c);
+                glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
+
+                glEnd();
+            }
+            else
+            {
+                glBegin(GL_TRIANGLES);
+
+                glColor3ub(points[i][j].a, points[i][j].b, points[i][j].c);
+                glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
+
+                glColor3ub(points[i][j + 1].a, points[i][j + 1].b, points[i][j + 1].c);
+                glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
+
+                glColor3ub(points[i + 1][j].a, points[i + 1][j].b, points[i + 1][j].c);
+                glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
+
+                glEnd();
+
+                glBegin(GL_TRIANGLES);
+
+                glColor3ub(points[i + 1][j].a, points[i + 1][j].b, points[i + 1][j].c);
+                glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
+
+                glColor3ub(points[i + 1][j + 1].a, points[i + 1][j + 1].b, points[i + 1][j + 1].c);
+                glVertex3f(points[i + 1][j + 1].x, points[i + 1][j + 1].y, points[i + 1][j + 1].z);
+
+                glColor3ub(points[i][j + 1].a, points[i][j + 1].b, points[i][j + 1].c);
+                glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
+
+                glEnd();
+            }
         }
     }
 }
